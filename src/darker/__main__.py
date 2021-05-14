@@ -1,5 +1,6 @@
 """Darker - apply black reformatting to only areas edited since the last commit"""
 
+import glob
 import logging
 import sys
 from argparse import Action, ArgumentError
@@ -16,6 +17,7 @@ from darker.diff import diff_and_get_opcodes, opcodes_to_chunks
 from darker.git import (
     WORKTREE,
     EditedLinenumsDiffer,
+    NotGitRespository,
     RevisionRange,
     git_get_content_at_revision,
     git_get_modified_files,
@@ -283,7 +285,16 @@ def main(argv: List[str] = None) -> int:
         changed_files = paths
     else:
         # In other modes, only process files which have been modified.
-        changed_files = git_get_modified_files(paths, revrange, git_root)
+        try:
+            changed_files = git_get_modified_files(paths, revrange, git_root)
+        except NotGitRespository:
+            changed_files = set()
+            for path in paths:
+                if str(path).endswith(".py"):
+                    changed_files.add(Path(path))
+                else:
+                    more_files = glob.glob(str(path) + "/**/*.py", recursive=True)
+                    changed_files.update({Path(p) for p in more_files})
     for path, old, new in format_edited_parts(
         git_root,
         changed_files,
