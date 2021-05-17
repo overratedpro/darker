@@ -5,7 +5,7 @@ import sys
 from argparse import Action, ArgumentError
 from difflib import unified_diff
 from pathlib import Path
-from typing import Generator, Iterable, List, Tuple
+from typing import Generator, Iterable, List, Optional, Tuple
 
 from darker.black_diff import BlackArgs, run_black
 from darker.chooser import choose_lines
@@ -147,9 +147,13 @@ def modify_file(path: Path, new_content: TextDocument) -> None:
     path.write_bytes(new_content.encoded_string)
 
 
-def print_diff(path: Path, old: TextDocument, new: TextDocument) -> None:
+def print_diff(
+    path: Path, old: TextDocument, new: TextDocument, root: Optional[Path] = None
+) -> None:
     """Print ``black --diff`` style output for the changes"""
-    relative_path = path.resolve().relative_to(Path.cwd()).as_posix()
+    if root is None:
+        root = Path.cwd()
+    relative_path = path.resolve().relative_to(root).as_posix()
     diff = "\n".join(
         line.rstrip("\n")
         for line in unified_diff(old.lines, new.lines, relative_path, relative_path)
@@ -246,7 +250,7 @@ def main(argv: List[str] = None) -> int:
     ):
         failures_on_modified_lines = True
         if args.diff:
-            print_diff(path, old, new)
+            print_diff(path, old, new, git_root)
         if write_modified_files:
             modify_file(path, new)
     if run_linters(args.lint, git_root, changed_files, revrange):
