@@ -329,11 +329,17 @@ def test_format_edited_parts_historical(git_repo, rev1, rev2, expect):
         arguments=["--diff", "--lint", "echo a.py:1: message"],
         expect_stdout=A_PY_DIFF_BLACK[:-1] + ["a.py:1: message /a.py", ""],
     ),
+    dict(
+        arguments=["--diff"],
+        expect_stdout=A_PY_DIFF_BLACK,
+        root_as_cwd=False,
+    ),
     # for all test cases, by default there's no output, `a.py` stays unmodified, and the
     # return value is a zero:
     expect_stdout=[""],
     expect_a_py=A_PY,
     expect_retval=0,
+    root_as_cwd=True,
 )
 @pytest.mark.parametrize("newline", ["\n", "\r\n"], ids=["unix", "windows"])
 def test_main(
@@ -345,14 +351,22 @@ def test_main(
     expect_stdout,
     expect_a_py,
     expect_retval,
+    root_as_cwd,
+    tmp_path_factory,
 ):  # pylint: disable=too-many-arguments
     """Main function outputs diffs and modifies files correctly"""
-    monkeypatch.chdir(git_repo.root)
+    if root_as_cwd:
+        cwd = git_repo.root
+        pwd = ""
+    else:
+        cwd = tmp_path_factory.mktemp("not_a_git_repo")
+        pwd = str(git_repo.root) + "/"
+    monkeypatch.chdir(cwd)
     paths = git_repo.add({"a.py": newline, "b.py": newline}, commit="Initial commit")
     paths["a.py"].write_bytes(newline.join(A_PY).encode("ascii"))
     paths["b.py"].write_bytes(f"print(42 ){newline}".encode("ascii"))
 
-    retval = darker.__main__.main(arguments + ["a.py"])
+    retval = darker.__main__.main(arguments + [pwd + "a.py"])
 
     stdout = capsys.readouterr().out.replace(str(git_repo.root), '')
     assert stdout.replace(os.sep, "/").split("\n") == expect_stdout
