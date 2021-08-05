@@ -353,13 +353,13 @@ def test_format_edited_parts_historical(git_repo, rev1, rev2, expect):
     dict(
         arguments=["--check", "--lint", "echo a.py:1: message"],
         # Windows compatible path assertion using `pathlib.Path()`
-        expect_stdout=[f"a.py:1: message {Path('/a.py')}"],
+        expect_stdout=["", f"a.py:1: message {Path('/a.py')}"],
         expect_retval=1,
     ),
     dict(
         arguments=["--diff", "--lint", "echo a.py:1: message"],
         # Windows compatible path assertion using `pathlib.Path()`
-        expect_stdout=A_PY_DIFF_BLACK + [f"a.py:1: message {Path('/a.py')}"],
+        expect_stdout=A_PY_DIFF_BLACK + ["", f"a.py:1: message {Path('/a.py')}"],
     ),
     dict(
         arguments=[],

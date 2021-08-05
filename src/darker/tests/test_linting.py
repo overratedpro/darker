@@ -38,13 +38,13 @@ def test_parse_linter_line(git_repo, monkeypatch, line, expect):
         _descr="Check one file, report on a modified line in test.py",
         paths=["one.py"],
         location="test.py:1:",
-        expect=["test.py:1: {git_repo.root / 'one.py'}"],
+        expect=["", "test.py:1: {git_repo.root / 'one.py'}"],
     ),
     dict(
         _descr="Check one file, report on a column of a modified line in test.py",
         paths=["one.py"],
         location="test.py:1:42:",
-        expect=["test.py:1:42: {git_repo.root / 'one.py'}"],
+        expect=["", "test.py:1:42: {git_repo.root / 'one.py'}"],
     ),
     dict(
         _descr="No output if report is on an unmodified line in test.py",
@@ -59,16 +59,19 @@ def test_parse_linter_line(git_repo, monkeypatch, line, expect):
         expect=[],
     ),
     dict(
-        _descr="Check two files, rpeort on a modified line in test.py",
+        _descr="Check two files, report on a modified line in test.py",
         paths=["one.py", "two.py"],
         location="test.py:1:",
-        expect=["test.py:1: {git_repo.root / 'one.py'} {git_repo.root / 'two.py'}"],
+        expect=["", "test.py:1: {git_repo.root / 'one.py'} {git_repo.root / 'two.py'}"],
     ),
     dict(
         _descr="Check two files, rpeort on a column of a modified line in test.py",
         paths=["one.py", "two.py"],
         location="test.py:1:42:",
-        expect=["test.py:1:42: {git_repo.root / 'one.py'} {git_repo.root / 'two.py'}"],
+        expect=[
+            "",
+            "test.py:1:42: {git_repo.root / 'one.py'} {git_repo.root / 'two.py'}",
+        ],
     ),
     dict(
         _descr="No output if 2-file report is on an unmodified line in test.py",
