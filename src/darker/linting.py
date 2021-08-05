@@ -90,6 +90,7 @@ def run_linter(
     for line in linter_process.stdout:
         path_in_repo, linter_error_linenum = _parse_linter_line(line, git_root)
         if path_in_repo is None:
+            logger.debug("Unknown path %s from %s", path_in_repo, cmdline)
             continue
         edited_linenums = edited_linenums_differ.compare_revisions(
             path_in_repo, context_lines=0
