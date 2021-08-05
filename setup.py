@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import re
 
 from setuptools import setup
@@ -32,4 +34,8 @@ def make_pypi_compliant_readme() -> str:
     return modified_readme
 
 
-setup(long_description=make_pypi_compliant_readme())
+setup(
+    setup_requires=['pbr'],
+    pbr=True,
+    long_description=make_pypi_compliant_readme(),
+)
