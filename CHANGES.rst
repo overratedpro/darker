@@ -5,6 +5,16 @@ These features will be included in the next release:
 
 Added
 -----
+
+Fixed
+-----
+
+
+1.3.0_ - 2021-mm-dd
+===================
+
+Added
+-----
 - Support for Black's ``--skip-magic-trailing-comma`` option
 - ``darker --diff`` output is now identical to that of ``black --diff``
 - The ``-d`` / ``--stdout`` option outputs the reformatted contents of the single Python
@@ -12,6 +22,8 @@ Added
 - Terminate with an error if non-existing files or directories are passed on the command
   line. This also improves the error from misquoted parameters like ``"--lint pylint"``.
 - Allow Git test case to run slower when checking file timestamps. CI can be slow.
+- Show a simple one-line error instead of full traceback on some unexpected failures
+- Skip reformatting files set to be excluded by Black in configuration files
 
 Fixed
 -----
@@ -178,7 +190,8 @@ Added
 -----
 - Initial implementation
 
-.. _Unreleased: https://github.com/akaihola/darker/compare/1.2.4...HEAD
+.. _Unreleased: https://github.com/akaihola/darker/compare/1.3.0...HEAD
+.. _1.2.4: https://github.com/akaihola/darker/compare/1.2.4...1.3.0
 .. _1.2.4: https://github.com/akaihola/darker/compare/1.2.3...1.2.4
 .. _1.2.3: https://github.com/akaihola/darker/compare/1.2.2...1.2.3
 .. _1.2.2: https://github.com/akaihola/darker/compare/1.2.1...1.2.2
